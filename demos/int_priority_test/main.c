@@ -41,6 +41,9 @@ void test_byte_access(void)
 
 int main(void)
 {
+    test_word_access();
+    test_byte_access();
+
     /* Freeze */
     while(1);
 }
