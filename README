@@ -2,100 +2,136 @@ Olimex STM32 P103 Development Kit Demos
 
 OVERVIEW
 This suite contains a number of small, simple demo programs for exercising the
-various peripherals of the STM32 Microcontroller.  It was also used during
-the development of the STM32 Microcontroller/STM32 P103 Machine implementations
-in the QEMU emulator (http://wiki.qemu.org/Main_Page).  The makefile and
-linker scripts are intended to be run in a GNU/Linux environment.  I
-compiled the programs using the CodeSourcery G++ Lite compiler for ARM.
+various peripherals of the STM32 Microcontroller.
+
+A makefile is included which can compile the demos,
+program/debug the development board, and run/debug them in QEMU.
 
 DEPENDENCIES
+The makefile and linker scripts are intended to be run in a GNU/Linux environment.  
+
 To compile, you need the ARM GCC compiler and utilities (arm-none-eabi-gcc,
 arm-none-eabi-ld, arm-none-eabi-as, arm-none-eabi-objcopy,
-arm-none-eabi-objdump).  These should be in your path.
-To program/debug a microcontroller, you will need a programmer that is compatible
-with openocd, and you will need openocd installed.  If you do not have a
-compatible programmer, you will need to modify the makefile.
+arm-none-eabi-objdump).  These should be in your path.  I chose
+to compile using the CodeSourcery G++ Lite toolchain for ARM.  At the time of
+writing, I used:
+Sourcery CodeBench Lite 2012.03-56 for ARM EABI
+
+To run the QEMU examples, you need a modifed version of QEMU which contains the
+STM32 peripherals.  This can be found at: https://github.com/beckus/qemu_stm32 .
+The QEMU_ARM_DIR can be set to the location of the qemu_system_arm executable.
+If the variable is not set, it defaults to ../qemu_stm32/arm-softmmu/ .
 
 For the UART examples, I used cutecom as my terminal software.  For the echo
-examples, you may need to use the "No line end" option.  Otherwise it will
-send a line feed and overflow the UART buffer.  Note that for QEMU, by default,
-the UART will wait until the buffer is empty before accepting the next character
-so that it won't overflow.
+examples, you need to use the "No line end" option.  The FreeRTOS example needs
+to have "LF line end". Otherwise it will send a line feed and overflow the UART
+buffer (since we are not using flow control).  Connect with these settings:
+9600 Baud Rate
+8 Data bits
+1 Stop bit
+
 
 DEMOS
 The following demos are provided.  All of them except blink_flash_asm are written
-in C, and use ST's initialization library:
+in C, and use ST's initialization library.
+
 blink_flash -
-	Flashes the LED on and off 
+    Flashes the LED on and off 
 blink_flash_asm -
-	Same as blink_flash, but written in assembly language.
-	This is the simplest demo, and probably the best example
-	for low-level troubleshooting.
+    Same as blink_flash, but written in assembly language.
+    This is the simplest demo, and probably the best example
+    for low-level troubleshooting.
+button -
+    Example of using the button in non-interrupt mode.  Continuously polls
+    the button and toggles the LED when the button is pressed.
 button_int -
-	Example of external interrupts.  Toggles the LED every time the "WAKE-UP"
-	button is pressed.  Note that in QEMU, the button press is simulated
-	by pressing the b key.  To do this in QEMU, you can run the command
-	"sendkey b" in the QEMU monitor.
+    Example of external interrupts.  Toggles the LED every time the
+    button is pressed.  Note that in QEMU, the button press is simulated
+    by pressing the b key.  You will need to do this from the QEMU monitor,
+    by typing the command "sendkey b".
 button_int_infinite -
-	Example of why the interrupt flag needs to be cleared.
-	When the button is pressed, the interrupt fires,
-	but the interrupt pending flag is not cleared.  This
-	causes the interrupt to repeatedly fire indefinitely.
+    Example of why the interrupt flag needs to be cleared.
+    When the button is pressed, the interrupt fires,
+    but the interrupt pending flag is not cleared.  This
+    causes the interrupt to repeatedly fire.
 c_mem_model - 
-	Doesn't do anything.  Declares various variables so that the
+    Does not do anything.  Declares various variables so that the
     memory organization can be studied (by viewing the listing or
     running through the debugger).  There are also other listings (e.g. symbol
     listings) that you can produce, but these aren't automatically created
     by the makefile.
-freertos - 
-	Example of using a real time operating system (FreeRTOS).  This
-    runs several tasks which do the following:
-		   1) Blink the LED.
-		   2) Print the string "Hello 1" to the RS232 port (twice a second).
-		   3) Print the string "Hello 2" to the RS232 port (once every two seconds).
-		   4) Listens to the RS232 port.  When you type a line and then hit
-		      the enter key, the line is echoed back. 
-led_toggle -
-	Toggles the LED every time the "WAKE-UP" button is pressed.  This is the
-	same as button_int, except it polls instead of using interrupts.  
+freertos_singlethread -
+	Example of using a real time operating system (FreeRTOS).  This runs a
+	single task to flash the LED on and off.
+freertos_multithread - 
+    Example of using a real time operating system (FreeRTOS).  This
+    runs the following tasks concurrently:
+      1) Blink the LED.
+      2) Print the string "Hello 1" to the RS232 port (twice a second).
+      3) Print the string "Hello 2" to the RS232 port (once every two seconds).
+      4) Listens to the RS232 port.  When you type a line and then hit
+         the enter key, the line is echoed back.
+int_priority_test -
+    Tests changes made in the QEMU_STM32 project to allow byte access to the
+    System Handler Priority Registers.  Unless you are really interested,
+    you should proably skip this demo.
 software_int -
-	Periodically generates a software interrupt that in turn toggles the LED.
+    Periodically generates a software interrupt that in turn toggles the LED.
 stkalign
-	Tests the STKALIGN bit in the NVIC CCR register.  This example must be
-	run in a debugger to verify the alignment is working.  I have had limited
-	success with running this with QEMU.
+    Tests the STKALIGN bit in the NVIC CCR register.  This example must be
+    run in a debugger to verify the alignment is working.  I have had limited
+    success with running this with QEMU.  Unless you are really interested,
+    you should proably skip this demo.
 systick
-	Uses the Cortex NVIC system tick timer to flash the LED.
-uart_echo
-	Tests the UART read/write functionality.  Waits for a character to be
-	received and then echoes the character back.  This example uses
-	polling.
-uart_echo_int
-	The same as uart_echo, except this example is interrupt driven.
+    Uses the Cortex NVIC system tick timer to flash the LED.
 uart_repeat_write
-	Tests the UART write functionality.  Continues to write characters to the
-	UART.  This example uses polling.
+    Tests the UART write functionality.  Continues to write the word "Hello"
+    to the UART.  This example uses polling.
 uart_repeat_write_int
-	The same as uart_repeat_write, except this example is interrupt driven.
-
+    Tests the UART write functionality, but using interrupts.  It
+    repeatedly writes an X to the UART.
+uart_echo
+    Tests the UART read/write functionality.  Waits for a character to be
+    received and then echoes the character back.  This example uses
+    polling.
+uart_echo_int
+    The same as uart_echo, except this example is interrupt driven.
+    
 FOLDER STRUCTURE
+demos
+    Contains the demo source code.
 eclipse
-	Contains Eclipse debug launchers that can be imported into Eclipse.
-Libraries
-	Contains shared libraries
-Libraries/CMSIS
-	Contains CMSIS source code (a common API for ARM Cortex cores that is vendor
-	independent) - provided by STMicro.
-Libraries/FreeRTOS
-	Contains the FreeRTOS real time operating system source code
-Libraries/STM32F10x_StdPeriph_Driver
-	Contains STM32 peripheral libraries provided by STMicro         .         
+    Contains Eclipse debug launchers that can be imported into Eclipse.  Only
+    launchers for the blink_flash example are included.  Other launchers can be
+    created by duplicating these.
+        Debug blink_flash
+            Starts a remote debug session to debug the blink_flash program. This
+            will connect to QEMU or to OpenOCD, both of which must be in debug
+            mode.
+        Debug QEMU (blink_flash)
+            Starts debugging QEMU's code while it is running the blink_flash
+            example.  Note that the SIGUSR1 signal will keep firing, so you will
+            need to disable the signal breakpoint, or the debugger will keep
+            pausing. 
+libraries
+    Contains shared libraries from external sources
+libraries/CMSIS
+    Contains CMSIS source code (a common API for ARM Cortex cores that is vendor
+    independent) - copied from STMicro's STM32F10x_StdPeriph_Lib.zip V3.5.0.
+    Note that the file CMSIS/CM3/DeviceSupport/ST/STM32F10x/stm32f10x.h has been 
+    odified to uncomment the "#define STM32F10X_MD" and
+    "#define USE_STDPERIPH_DRIVER" lines.
+libraries/FreeRTOS
+    Contains the FreeRTOS real time operating system source code - this is a
+    copy of the Source folder from FreeRTOSV7.1.1.zip
+libraries/STM32F10x_StdPeriph_Driver
+    Contains STM32 peripheral libraries - copied from
+    STMicro's STM32F10x_StdPeriph_Lib.zip V3.5.0
 openocd
-	Contains STM32 openocd configuration scripts.
+    Contains STM32 openocd configuration scripts.
 
 
-
-USAGE
+USING THE MAKEFILE
 The makefile contains targets that can be used to compile, run, and debug the
 demo programs.
 
@@ -103,16 +139,21 @@ Compiling:
 To compile one of the programs, run "make <program>_ALL"
 e.g. "make blink_flash_ALL".  This will produce three files in the <program>
 folder:
-	main.bin -  The raw binary file.  Can be used to program the microcontroller
-				or to run in QEMU.
-	main.elf -  The program with debug symbols included.  Can be loaded into
-	            a debugger.
-	main.list - A listing containing the entire program.  Can be examined to
-	            get disassembly, symbols, exact memory addresses, etc..
+    main.bin -  The raw binary file.  Can be used to program the microcontroller
+                or to run in QEMU.
+    main.elf -  The program with debug symbols included.  Can be loaded into
+                a debugger.
+    main.list - A listing containing the entire program.  Can be examined to
+                get disassembly, symbols, exact memory addresses, etc..
 Running "make" or "make all" runs "make <program>_ALL" for all of the programs.
 
-Programming on Microcontroller:
-To program the microcontroller with <program>, run "make <program>_PROG".
+Programming a Microcontroller:
+To program/debug a microcontroller, you will need a programmer that is compatible
+with openocd, and you will need openocd installed.
+
+To program the microcontroller with <program>, run 
+  make <program>_PROG
+
 By default it uses openocd and assumes you are using an
 Olimex ARM-USB-TINYH programmer.  This can be overriden by changing the
 OPENOCD_INTERFACE variable (or declaring an environment variable of the same
@@ -120,38 +161,99 @@ name).  Look inside the makefile for an example.  Once the microntroller is
 programmed, the program will automatically start executing.
 
 Running in QEMU:
-To run <program> in QEMU, run "make <program>_QEMURUN".  This should attach
-the RS232 UART  (i.e. UART2) to standard in/out, but it doesn't seem to work for
-me.  To test the UART, you can use one of these targets:
-	<program>_QEMURUN_PTY - Attaches UART2 to the PTY device.  QEMU will tell
-							you which PTY device to connect to.  If there
-							is too much text and the the PTY device line
-							scrolls off the console, you can also type
-							"info chardev" in the monitor and check the "serial0"
-							line to get the specific PTY device to connect to.
-							Sometimes I do not get any output from the UART
-							until I've typed a character or two (when using
-							cutecom to connect to the PTY device).  I don't
-							understand why, but maybe I'm doing something
-							wrong.
-	<program>_QEMURUN_TEL - Attaches UART2 to a telnet server at port 7777.
+See the DEPENDENCIES section for more details.  To run <program> in QEMU, run
+    make <program>_QEMURUN
 
-Debugging in Microcontroller:
+This should attach the RS232 UART (i.e. UART2) to standard in/out, but it
+doesn't seem to work for me.  To test the UART, you can use one of these
+targets:
+    <program>_QEMURUN_PTY - Attaches UART2 to the PTY device.  QEMU will tell
+                            you which PTY device to connect to.  If there
+                            is too much text and the the PTY device line
+                            scrolls off the console, you can also type
+                            "info chardev" in the monitor and check the "serial0"
+                            line to get the specific PTY device to connect to.
+                            Sometimes I do not get any output from the UART
+                            until I've typed a character or two (when using
+                            cutecom to connect to the PTY device).  I don't
+                            understand why, but maybe I'm doing something
+                            wrong.
+    <program>_QEMURUN_TEL - Attaches UART2 to a telnet server at port 7777.
+
+Debugging a Microcontroller:
 To debug <program>, first program it into the Microcontroller.  Then
-run "make DBG".  This will start openocd in debug mode with the current program and will
-create a GDB server at port 3333.  You can connect to it with GDB, or a GDB
-based debugger (I used Eclipse).
+run "make DBG".  This will start openocd which
+creates a GDB server at port 3333.  You can connect to it with GDB, or a GDB
+based debugger (I use Eclipse).
 
 Debugging in QEMU:
-To debug <program> in QEMU, run "make <program>_QEMUDBG".  This start QEMU
+To debug <program> in QEMU, run "make <program>_QEMUDBG".  This will start QEMU
 in debug mode, which sets up a GDB server at port 3333.  Note that this is the
-same port used for OpenOCD - once you have GDB set up for debugging the
-Microcontroller, it should work interchangeably with QEMU and vice-versa. 
+same port used for debugging a microcontroller - once you have GDB set up for
+debugging the Microcontroller, it should work interchangeably with QEMU and
+vice-versa. 
 
 
 REFERENCES
-ST Microelectronics "RM0008 Reference Manual Rev 10" for the STM32 microcontroller.
+ST Microelectronics STM32 website
+	www.st.com/stm32
+	Specifically, see:
+	"RM0008 Reference Manual"
+	"PM0056 Programming manual"
+	STM32F10x standard peripheral library - stm32f10x_stdperiph_lib.zip (contains library and examples)
+	"STM32 More Than a Core - Circuit Cellar, Tom Cantrell"
+	
 Olimex "STM-P103 Development Board Users Manual Rev. A, April 2008"
+Olimex STM32-P103 Website (with user manual, schematic, examples, etc.) 
+    https://www.olimex.com/dev/stm32-p103.html
+ARM "Cortex-M3 Technical Reference Manual"
+"ARM v7-M Architecture Application Level Reference Manual"
+"ARM v7-M Architecture Reference Manual"
 
+Keil STM32 sample code
+    http://www.keil.com/download/list/all.htm
 
+Hitex Development Tools "The Insider's Guide To The STM32 ARM Based Microcontroller"
+
+SparkFun Forum Post - Flashing the Olimex STM32-P103 with OpenOCD r623 HOWTO
+    https://forum.sparkfun.com/viewtopic.php?t=10548
+
+EE Times - "Building Bare-Metal ARM Systems with GNU"
+    http://eetimes.com/design/embedded/4007119/Building-Bare-Metal-ARM-Systems-with-GNU-Part-1--Getting-Started
+
+Microcross "GNU ARM Assembler Quick Reference"
+	http://microcross.com/GNU-ARM-Assy-Quick-Ref.pdf
+	
+ARM "ELF for the ARM Architecture"
+
+ARM "Thumb Instruction Set Quick Reference Card"
+
+ST Microelectronics STM32F103xB datasheet
+
+Balau Blog - "Hello world for bare metal ARM using QEMU"
+    balau82.wordpress.com/2010/02/28/hello-world-for-bare-metal-arm-using-qemu/
+    
+OpenOCD User's Guide
+    http://openocd.sourceforge.net/doc/html/index.html
+
+Communit Ubuntu Documentation - OpenOCD
+    https://help.ubuntu.com/community/OpenOCD
+
+fun-tech.se "STM32/ARM Cortex-M3 HOWTO: Development under Ubuntu (Debian)"
+    http://fun-tech.se/stm32/OpenOCD/index.php
+    
+MakingThings "Debug with OpenOCD"
+    http://www.makingthings.com/documentation/tutorial/debug-with-openocd/tutorial-all-pages
+    
+Open-RD.org "How to setup OpenOCD under Linux?"
+    http://open-rd.org/index.php/faq/47-how-to-setup-openocd-under-linux
+    
+Jeroen Hermans "OpenOCD and Eclipse"
+    http://www.jeroenhermans.nl/openocd-and-eclipse
+
+OpenHardware "Olimex ARM-USB-OCD"
+    http://www.openhardware.net/Embedded_ARM/OpenOCD_JTAG/
+    
+	
+	
 Written by Andre Beckus

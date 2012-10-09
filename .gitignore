@@ -1,0 +1,6 @@
+# Compiled source #
+###################
+*.o
+*.bin
+*.elf
+*.list
