@@ -51,7 +51,7 @@ DEMOS += button_int_infinite
 DEMOS += c_mem_model
 DEMOS += freertos_singlethread
 DEMOS += freertos_multithread
-DEMOS += int_priority_test
+DEMOS += qemu_test
 DEMOS += software_int
 DEMOS += stkalign
 DEMOS += systick
@@ -202,9 +202,9 @@ demos/freertos_multithread/main.elf: $(FREE_RTOS_SRC)/portable/MemMang/heap_1.c
 	$(CC) $(CFLAGS_LINK) -Idemos/freertos_multithread/ -I$(FREE_RTOS_INC) -I$(FREE_RTOS_PORT_INC) -o $@ $^
 
 
-demos/int_priority_test/main.elf: demos/int_priority_test/main.c
-demos/int_priority_test/main.elf: $(COMMON_FILES)
-	$(CC) $(CFLAGS_LINK) -Idemos/int_priority_test/ -o $@ $^
+demos/qemu_test/main.elf: demos/qemu_test/main.c
+demos/qemu_test/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/qemu_test/ -o $@ $^
 
 
 demos/software_int/main.elf: demos/software_int/main.c

@@ -71,9 +71,8 @@ freertos_multithread -
       3) Print the string "Hello 2" to the RS232 port (once every two seconds).
       4) Listens to the RS232 port.  When you type a line and then hit
          the enter key, the line is echoed back.
-int_priority_test -
-    Tests changes made in the QEMU_STM32 project to allow byte access to the
-    System Handler Priority Registers.  Unless you are really interested,
+qemu_test -
+    Tests changes made in the QEMU_STM32.  Unless you are really interested,
     you should proably skip this demo.
 software_int -
     Periodically generates a software interrupt that in turn toggles the LED.
