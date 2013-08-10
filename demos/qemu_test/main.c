@@ -102,33 +102,46 @@ void test_byte_read(volatile uint8_t *addr, unsigned size)
 
 int main(void)
 {
-    uint32_t *vtor_reg = (uint32_t *)0xE000ED08;
-    uint32_t vtor = vtor_reg[0];
+    //uint32_t *vtor_reg = (uint32_t *)0xE000ED08;
+    //uint32_t vtor = vtor_reg[0];
+
+    uint16_t *uart2_cr_reg16 = (uint16_t *)0x4000440c;
+    uint16_t *uart2_cr_reg16unaligned = (uint16_t *)0x4000440d;
+    uint8_t *uart2_cr_reg8 = (uint8_t *)0x4000440c;
+    uint16_t value16;
 
     /* Note that the SHPR (System Handler Priority Registers) only hold a 4 bit
      * priority, which are stored in the upper 4 bits of each byte.  The lower
      * 4 bits of each byte are read-only and always hold 0.
      */
-    test_word_write((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x10, 0x10);
+    /*test_word_write((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x10, 0x10);
     test_word_read((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT);
 
     test_hword_write((uint16_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x20, 0x10);
     test_hword_read((uint16_t *)SCB->SHP, SHPR_BYTE_COUNT);
 
     test_byte_write(SCB->SHP, SHPR_BYTE_COUNT, 0x30, 0x10);
-    test_byte_read(SCB->SHP, SHPR_BYTE_COUNT);
+    test_byte_read(SCB->SHP, SHPR_BYTE_COUNT);*/
 
     /* Not implemented in QEMU */
     /*test_word_read((uint32_t *)0xe000efd0, 0x10);*/
 
-    test_word_read((uint32_t *)0xe000efe0, 0x10);
+    /*test_word_read((uint32_t *)0xe000efe0, 0x10);
     test_word_read((uint32_t *)0xe000eff0, 0x10);
 
     test_hword_read((uint16_t *)0xe000efe0, 0x10);
     test_hword_read((uint16_t *)0xe000eff0, 0x10);
 
     test_byte_read((uint8_t *)0xe000efe0, 0x10);
-    test_byte_read((uint8_t *)0xe000eff0, 0x10);
+    test_byte_read((uint8_t *)0xe000eff0, 0x10);*/
+
+    /* Test half-word writes/reads of UART*/
+    //uart2_cr_reg16[0] = 0x0000;
+    //uart2_cr_reg16[1] = 0x200c;
+    //value16 = uart2_cr_reg16[0];
+    //value16 = uart2_cr_reg16[1];
+    uart2_cr_reg8[0] = 0x00;
+    uart2_cr_reg16unaligned[0] = 0x00;
 
     /* Freeze */
     while(1);
