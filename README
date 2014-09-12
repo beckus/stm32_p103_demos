@@ -43,7 +43,10 @@ blink_flash_asm -
     for low-level troubleshooting.
 button -
     Example of using the button in non-interrupt mode.  Continuously polls
-    the button and toggles the LED when the button is pressed.
+    the button and toggles the LED when the button is pressed.  Note that this
+    example does not seem to work well in QEMU.  When using "sendkey b"
+    (see the button_int demo below), the LED does not toggle.  Perhaps
+    this is a timing issue?
 button_int -
     Example of external interrupts.  Toggles the LED every time the
     button is pressed.  Note that in QEMU, the button press is simulated
