@@ -4,6 +4,7 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_usart.h"
 #include "stm32f10x_exti.h"
+#include "stm32f10x_adc.h"
 #include "misc.h"
 
 void init_led(void)
@@ -122,3 +123,15 @@ void enable_rs232(void)
     /* Enable the RS232 port. */
     USART_Cmd(USART2, ENABLE);
 }
+
+void rs232_print_str(const char *str)
+{
+    const char *curr_char = str;
+
+    while(*curr_char != '\0') {
+        while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
+        USART_SendData(USART2, *curr_char);
+        curr_char++;
+    }
+}
+

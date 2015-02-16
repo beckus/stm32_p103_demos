@@ -40,10 +40,12 @@ COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_rcc.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_gpio.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_usart.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_exti.c
+COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_adc.c
 COMMON_FILES += $(STD_PERIPH_SRC)/misc.c
 
 # List all demos
-DEMOS =  blink_flash
+DEMOS =  adc_single
+DEMOS += blink_flash
 DEMOS += blink_flash_asm
 DEMOS += button
 DEMOS += button_int
@@ -163,6 +165,11 @@ demos/blink_flash_asm/main.elf: demos/blink_flash_asm/main.o
 
 demos/blink_flash_asm/main.o: demos/blink_flash_asm/main.s
 	 $(AS) $(ASFLAGS) -o $@ $<
+
+
+demos/adc_single/main.elf: demos/adc_single/main.c
+demos/adc_single/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/adc_single/ -o $@ $^
 
 
 demos/button/main.elf: demos/button/main.c

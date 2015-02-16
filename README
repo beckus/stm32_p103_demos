@@ -7,6 +7,8 @@ various peripherals of the STM32 Microcontroller.
 A makefile is included which can compile the demos,
 program/debug the development board, and run/debug them in QEMU.
 
+
+
 DEPENDENCIES
 The makefile and linker scripts are intended to be run in a GNU/Linux environment.  
 
@@ -30,42 +32,89 @@ buffer (since we are not using flow control).  Connect with these settings:
 8 Data bits
 1 Stop bit
 
+Note that the peripheral library knows the clock rate of the board via the
+HSE_VALUE and HSI_VALUE macros in
+libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x.h .
+
+
 
 DEMOS
 The following demos are provided.  All of them except blink_flash_asm are written
 in C, and use ST's initialization library.
 
+adc_single -
+    Note that this demo does not run in QEMU STM32 (because the ADC is not
+    implemented).
+
+    Samples analog data using the Analog to Digitcal Converter (ADC).  This
+    program performs a series of single samples and prints the results to the
+    UART.
+    
+    There are several modes:
+    Mode 1 - Print the value of the internal temperature sensor.
+             Also attempts to calculate the actual temperature using the formula
+             in the reference manual.  On my board, this gives a high
+             temperature which I assume is wrong.  Further investigation is
+             needed.
+    Mode 2 - Print value of the internal voltage reference.
+    Mode 3 - Print value on the external pin PC.0
+    Mode 4 - A special mode that doesn't use the ADC, but prints
+             the clock configuration.  This is useful for debugging.
+
+    To scroll through the modes, press the button on the development board.
+    All numbers are hexadecimal except for the degrees celsius temperature. 
+
+    One way to drive pin PC.0 with an analog signal is to use a
+    potentiometer as follows:
+                   VDDA
+                    |
+                    /
+                    \
+           PC.0 --->/
+                    \
+                    /
+                    \
+                    |
+                   GNDA
+
 blink_flash -
-    Flashes the LED on and off 
+    Flashes the LED on and off
+
 blink_flash_asm -
     Same as blink_flash, but written in assembly language.
     This is the simplest demo, and probably the best example
     for low-level troubleshooting.
+
 button -
     Example of using the button in non-interrupt mode.  Continuously polls
     the button and toggles the LED when the button is pressed.  Note that this
     example does not seem to work well in QEMU.  When using "sendkey b"
     (see the button_int demo below), the LED does not toggle.  Perhaps
     this is a timing issue?
+
 button_int -
     Example of external interrupts.  Toggles the LED every time the
     button is pressed.  Note that in QEMU, the button press is simulated
     by pressing the b key.  You will need to do this from the QEMU monitor,
     by typing the command "sendkey b".
+
 button_int_infinite -
     Example of why the interrupt flag needs to be cleared.
     When the button is pressed, the interrupt fires,
     but the interrupt pending flag is not cleared.  This
     causes the interrupt to repeatedly fire.
+
 c_mem_model - 
     Does not do anything.  Declares various variables so that the
     memory organization can be studied (by viewing the listing or
     running through the debugger).  There are also other listings (e.g. symbol
     listings) that you can produce, but these aren't automatically created
     by the makefile.
+
 freertos_singlethread -
-	Example of using a real time operating system (FreeRTOS).  This runs a
-	single task to flash the LED on and off.
+    Example of using a real time operating system (FreeRTOS).  This runs a
+    single task to flash the LED on and off.
+
 freertos_multithread - 
     Example of using a real time operating system (FreeRTOS).  This
     runs the following tasks concurrently:
@@ -74,31 +123,41 @@ freertos_multithread -
       3) Print the string "Hello 2" to the RS232 port (once every two seconds).
       4) Listens to the RS232 port.  When you type a line and then hit
          the enter key, the line is echoed back.
+
 qemu_test -
     Tests changes made in the QEMU_STM32.  Unless you are really interested,
     you should proably skip this demo.
+
 software_int -
     Periodically generates a software interrupt that in turn toggles the LED.
+
 stkalign
     Tests the STKALIGN bit in the NVIC CCR register.  This example must be
     run in a debugger to verify the alignment is working.  I have had limited
     success with running this with QEMU.  Unless you are really interested,
     you should proably skip this demo.
+
 systick
     Uses the Cortex NVIC system tick timer to flash the LED.
+
 uart_repeat_write
     Tests the UART write functionality.  Continues to write the word "Hello"
     to the UART.  This example uses polling.
+
 uart_repeat_write_int
     Tests the UART write functionality, but using interrupts.  It
     repeatedly writes an X to the UART.
+
 uart_echo
     Tests the UART read/write functionality.  Waits for a character to be
     received and then echoes the character back.  This example uses
     polling.
+
 uart_echo_int
     The same as uart_echo, except this example is interrupt driven.
-    
+
+
+
 FOLDER STRUCTURE
 demos
     Contains the demo source code.
@@ -131,6 +190,7 @@ libraries/STM32F10x_StdPeriph_Driver
     STMicro's STM32F10x_StdPeriph_Lib.zip V3.5.0
 openocd
     Contains STM32 openocd configuration scripts.
+
 
 
 USING THE MAKEFILE
@@ -196,6 +256,7 @@ debugging the Microcontroller, it should work interchangeably with QEMU and
 vice-versa. 
 
 
+
 REFERENCES
 ST Microelectronics STM32 website
 	www.st.com/stm32
@@ -204,6 +265,7 @@ ST Microelectronics STM32 website
 	"PM0056 Programming manual"
 	STM32F10x standard peripheral library - stm32f10x_stdperiph_lib.zip (contains library and examples)
 	"STM32 More Than a Core - Circuit Cellar, Tom Cantrell"
+	"AN3116 Application note: STM32's ADC Modes and their Applications"
 	
 Olimex "STM-P103 Development Board Users Manual Rev. A, April 2008"
 Olimex STM32-P103 Website (with user manual, schematic, examples, etc.) 
