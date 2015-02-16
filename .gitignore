@@ -4,3 +4,7 @@
 *.bin
 *.elf
 *.list
+
+# Eclipse
+.project
+.cproject
