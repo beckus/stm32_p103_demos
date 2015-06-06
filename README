@@ -135,7 +135,7 @@ stkalign
     Tests the STKALIGN bit in the NVIC CCR register.  This example must be
     run in a debugger to verify the alignment is working.  I have had limited
     success with running this with QEMU.  Unless you are really interested,
-    you should proably skip this demo.
+    you should probably skip this demo.
 
 systick
     Uses the Cortex NVIC system tick timer to flash the LED.
