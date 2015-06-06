@@ -41,6 +41,7 @@ COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_gpio.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_usart.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_exti.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_adc.c
+COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_tim.c
 COMMON_FILES += $(STD_PERIPH_SRC)/misc.c
 
 # List all demos
@@ -57,6 +58,7 @@ DEMOS += qemu_test
 DEMOS += software_int
 DEMOS += stkalign
 DEMOS += systick
+DEMOS =  timer
 DEMOS += uart_echo
 DEMOS += uart_echo_int
 DEMOS += uart_repeat_write
@@ -227,6 +229,11 @@ demos/stkalign/main.elf: $(COMMON_FILES)
 demos/systick/main.elf: demos/systick/main.c
 demos/systick/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/systick/ -o $@ $^
+
+
+demos/timer/main.elf: demos/timer/main.c
+demos/timer/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/timer/ -o $@ $^
 
 
 demos/uart_echo/main.elf: demos/uart_echo/main.c

@@ -43,9 +43,6 @@ The following demos are provided.  All of them except blink_flash_asm are writte
 in C, and use ST's initialization library.
 
 adc_single -
-    Note that this demo does not run in QEMU STM32 (because the ADC is not
-    implemented).
-
     Samples analog data using the Analog to Digitcal Converter (ADC).  This
     program performs a series of single samples and prints the results to the
     UART.
@@ -76,6 +73,9 @@ adc_single -
                     \
                     |
                    GNDA
+
+    * Note that the ADC demo does not run in QEMU STM32 (because the ADC is not
+      implemented).
 
 blink_flash -
     Flashes the LED on and off
@@ -139,6 +139,29 @@ stkalign
 
 systick
     Uses the Cortex NVIC system tick timer to flash the LED.
+
+timer
+    Uses the timer to count up and down.
+    
+    There are several modes:
+    Mode 1 - Count up for five seconds.  Once five seconds have elapsed, the
+             LED is toggled and count resets.
+    Mode 2 - Similar to Mode 1, but counts down instead of up.
+    Mode 3 - Similar to Modes 1 and 2, but alternately counts up and then down.
+    Mode 4 - Counts in one shot mode.  Each time the count is finished, the
+             timer will be re-enabled to do another one shot count.
+    Mode 4 - Counts up, but when the count reaches 3, it will interrupt the
+             count using the UG flag.  At that point the timer resets and
+             starts counting from 1 again..
+    Mode 6 - A special mode that doesn't use the timer, but prints
+             the clock configuration.  This is useful for debugging.
+
+    To scroll through the modes, press the button on the development board.
+    All numbers are in decimal. 
+
+    * Note that the timer in QEMU STM32 does not behave exactly like real
+      hardware.  In particular, the counting does not always go in the right
+      direction, and the one shot mode does not appear to work properly.
 
 uart_repeat_write
     Tests the UART write functionality.  Continues to write the word "Hello"
