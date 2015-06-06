@@ -5,6 +5,8 @@ int main(void)
 {
     uint8_t b;
 
+    init_led();
+
     init_rs232();
     USART_Cmd(USART2, ENABLE);
 
