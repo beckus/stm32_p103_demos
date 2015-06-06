@@ -2,20 +2,6 @@
 #include "stm32f10x.h"
 
 
-void send_byte(uint8_t b)
-{
-    /* Wait until the RS232 port can receive another byte. */
-    while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
-
-    /* Toggle the LED just to show that progress is being made. */
-    GPIOC->ODR ^= 0x00001000;
-
-    /* Send the byte */
-    USART_SendData(USART2, b);
-}
-
-
-
 int main(void)
 {
     init_led();

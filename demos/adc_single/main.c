@@ -18,58 +18,12 @@ void EXTI0_IRQHandler(void)
     }
 }
 
-
-
-/* Functions for sending numbers through the UART */
-char hex_to_char(unsigned hex_number)
-{
-    if(hex_number < 0xA) {
-        return hex_number + '0';
-    } else {
-        return hex_number - 0xA + 'A';
-    }
-}
-
-void send_byte(uint8_t b)
-{
-    /* Wait until the RS232 port can receive another byte. */
-    while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
-
-    /* Toggle the LED just to show that progress is being made. */
-    GPIOC->ODR ^= 0x00001000;
-
-    /* Send the byte */
-    USART_SendData(USART2, b);
-}
-
 void send_adc_sample(unsigned int sample)
 {
     send_byte(hex_to_char((sample >> 8) & 0xf));
     send_byte(hex_to_char((sample >> 4) & 0xf));
     send_byte(hex_to_char(sample & 0xf));
 }
-
-void send_number(unsigned long sample, int radix)
-{
-    int digit;
-    unsigned long  mod;
-    char str[100];
-
-    digit = 0;
-    do {
-        mod = sample % radix;
-        str[digit] = hex_to_char(mod);
-        sample /= radix;
-        digit++;
-    } while(sample != 0);
-
-    while(digit != 0) {
-        digit--;
-        while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
-        USART_SendData(USART2, str[digit]);
-    }
-}
-
 
 /* ADC functions */
 void init_adc(void) {

@@ -1,6 +1,8 @@
 #ifndef __STM32_P103_H
 #define __STM32_P103_H
 
+#include "stm32f10x.h"
+
 /* This library contains routines for interfacing with the STM32 P103 board. */
 
 /* Initialize the LED (the board only has one). */
@@ -22,5 +24,9 @@ void init_rs232(void);
 void enable_rs232_interrupts(void);
 
 void enable_rs232(void);
+
+/* Functions for sending numbers through the UART */
+void send_byte(uint8_t b);
+void send_number(unsigned long sample, int radix);
 
 #endif /* __STM32_P103_H */
