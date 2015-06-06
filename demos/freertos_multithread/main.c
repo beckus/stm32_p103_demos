@@ -64,7 +64,7 @@ void USART2_IRQHandler(void)
     }
 }
 
-void send_byte(char ch)
+void send_byte_rtos(char ch)
 {
     /* Wait until the RS232 port can receive another byte (this semaphore is
      * "given" by the RS232 port interrupt when the buffer has room for another
@@ -79,7 +79,7 @@ void send_byte(char ch)
     USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
 }
 
-char receive_byte(void)
+char receive_byte_rtos(void)
 {
     serial_ch_msg msg;
 
@@ -113,7 +113,7 @@ void rs232_xmit_msg_task( void *pvParameters )
         /* Write each character of the message to the RS232 port. */
         curr_char = 0;
         while(msg.str[curr_char] != '\0') {
-            send_byte(msg.str[curr_char]);
+            send_byte_rtos(msg.str[curr_char]);
             curr_char++;
         }
     }
@@ -165,7 +165,7 @@ void serial_readwrite_task( void *pvParameters )
         done = 0;
         do {
             /* Receive a byte from the RS232 port (this call will block). */
-            ch = receive_byte();
+            ch = receive_byte_rtos();
 
             /* If the byte is an end-of-line type character, then finish the
              * string and indicate we are done.
