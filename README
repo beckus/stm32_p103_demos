@@ -47,7 +47,8 @@ adc_single -
     program performs a series of single samples and prints the results to the
     UART.
     
-    There are several modes:
+    There are several modes.  To scroll through the modes, press the button on
+    the development board:
     Mode 1 - Print the value of the internal temperature sensor.
              Also attempts to calculate the actual temperature using the formula
              in the reference manual.  On my board, this gives a high
@@ -55,10 +56,9 @@ adc_single -
              needed.
     Mode 2 - Print value of the internal voltage reference.
     Mode 3 - Print value on the external pin PC.0
-    Mode 4 - A special mode that doesn't use the ADC, but prints
+    Mode 4 - A special mode that does not use the ADC, but prints
              the clock configuration.  This is useful for debugging.
 
-    To scroll through the modes, press the button on the development board.
     All numbers are hexadecimal except for the degrees celsius temperature. 
 
     One way to drive pin PC.0 with an analog signal is to use a
@@ -143,21 +143,20 @@ systick
 timer
     Uses the timer to count up and down.
     
-    There are several modes:
+    There are several modes.  To scroll through the modes, press the button on
+    the development board:
     Mode 1 - Count up for five seconds.  Once five seconds have elapsed, the
-             LED is toggled and count resets.
+             LED is toggled and the count resets to 1.
     Mode 2 - Similar to Mode 1, but counts down instead of up.
     Mode 3 - Similar to Modes 1 and 2, but alternately counts up and then down.
-    Mode 4 - Counts in one shot mode.  Each time the count is finished, the
+    Mode 4 - Counts in one-shot mode.  Each time the count is finished, the
              timer will be re-enabled to do another one shot count.
-    Mode 4 - Counts up, but when the count reaches 3, it will interrupt the
-             count using the UG flag.  At that point the timer resets and
-             starts counting from 1 again..
-    Mode 6 - A special mode that doesn't use the timer, but prints
+    Mode 4 - Counts up, but when the count reaches 3, the program interrupts the
+             count using the UG flag.  This resets the count back to 1.
+    Mode 6 - A special mode that does not use the timer, but prints
              the clock configuration.  This is useful for debugging.
 
-    To scroll through the modes, press the button on the development board.
-    All numbers are in decimal. 
+`	All numbers are in decimal.
 
     * Note that the timer in QEMU STM32 does not behave exactly like real
       hardware.  In particular, the counting does not always go in the right
