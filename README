@@ -111,6 +111,9 @@ c_mem_model -
     listings) that you can produce, but these aren't automatically created
     by the makefile.
 
+dac
+    Needs documentation
+
 freertos_singlethread -
     Example of using a real time operating system (FreeRTOS).  This runs a
     single task to flash the LED on and off.
@@ -127,6 +130,9 @@ freertos_multithread -
 qemu_test -
     Tests changes made in the QEMU_STM32.  Unless you are really interested,
     you should proably skip this demo.
+
+rtc
+    Needs documentation
 
 software_int -
     Periodically generates a software interrupt that in turn toggles the LED.
