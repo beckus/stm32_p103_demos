@@ -42,6 +42,8 @@ COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_usart.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_exti.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_adc.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_tim.c
+COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_rtc.c
+COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_dac.c
 COMMON_FILES += $(STD_PERIPH_SRC)/misc.c
 
 # List all demos
@@ -63,6 +65,8 @@ DEMOS += uart_echo
 DEMOS += uart_echo_int
 DEMOS += uart_repeat_write
 DEMOS += uart_repeat_write_int
+DEMOS += rtc
+DEMOS += dac
 
 # List all demo folders
 DEMO_FOLDERS = $(addprefix demos/,$(DEMOS))
@@ -250,7 +254,14 @@ demos/uart_echo_int/main.elf: demos/uart_echo_int/main.c
 demos/uart_echo_int/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/uart_echo_int/ -o $@ $^
 
-
 demos/uart_repeat_write_int/main.elf: demos/uart_repeat_write_int/main.c
 demos/uart_repeat_write_int/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/uart_repeat_write_int/ -o $@ $^
+
+demos/dac/main.elf: demos/dac/main.c
+demos/dac/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/dac/ -o $@ $^
+
+demos/rtc/main.elf: demos/rtc/main.c
+demos/rtc/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/rtc/ -o $@ $^

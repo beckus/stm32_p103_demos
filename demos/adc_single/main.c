@@ -28,15 +28,15 @@ void send_adc_sample(unsigned int sample)
 /* ADC functions */
 void init_adc(void) {
     ADC_InitTypeDef ADC_InitStructure;
-
+    GPIO_InitTypeDef GPIO_InitStructure;
     /* Configure peripheral clock. */
     /* Per the STM32F103xB datasheet, the maximum frequency for the
      * the ADC is 14 Mhz.  Using a ADC prescaler value of 6 gives
      * 72 Mhz / 6 = 12 Mhz
      */
     RCC_ADCCLKConfig(RCC_PCLK2_Div6);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
     ADC_InitStructure.ADC_ScanConvMode = DISABLE;
     ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
@@ -44,7 +44,12 @@ void init_adc(void) {
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
     ADC_InitStructure.ADC_NbrOfChannel = 1;
     ADC_Init(ADC1, &ADC_InitStructure);
-
+     
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+   // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;//_FLOATING;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+   
     ADC_Cmd(ADC1, ENABLE);
 
     /* Enable ADC1 reset calibration register */
@@ -65,9 +70,11 @@ uint16_t sample_adc(uint8_t adc_channel) {
      * As long as the channel does not change since the last sampling,
      * I assume it is OK.
      */
-    ADC_RegularChannelConfig(ADC1, adc_channel, 1, ADC_SampleTime_13Cycles5);
+    ADC_RegularChannelConfig(ADC1, adc_channel, 1, ADC_SampleTime_239Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+
     while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+   
     return ADC_GetConversionValue(ADC1);
 }
 
@@ -94,7 +101,7 @@ int main(void)
     while(1) {
         uint16_t adc_value;
         switch(mode) {
-            case 1:
+            case 1:                
                 adc_value = sample_adc(ADC_Channel_16);
                 rs232_print_str("MODE 1   Temp(Raw)=");
                 send_adc_sample(adc_value);
@@ -103,6 +110,7 @@ int main(void)
                  * TODO: validate this formula or adjust it to make it
                  * accurate.
                  */
+
                 int tempC = (((1.43*0xFFF/3.3) - adc_value)/4.3) + 25;
                 rs232_print_str("   Temp(Deg Celsius)=");
                 send_number(tempC, 10);
@@ -111,11 +119,12 @@ int main(void)
             case 2:
                 adc_value = sample_adc(ADC_Channel_17);
                 rs232_print_str("MODE 2   VREF=");
-                send_adc_sample(adc_value);
+                send_number(adc_value, 10);
+                //send_adc_sample(adc_value);
                 send_byte('\n');
                 break;
             case 3:
-                adc_value = sample_adc(ADC_Channel_10);
+                adc_value = sample_adc(ADC_Channel_8);
                 rs232_print_str("MODE 3   PC0=");
                 send_adc_sample(adc_value);
                 send_byte('\n');
