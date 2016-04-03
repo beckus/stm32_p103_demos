@@ -74,9 +74,6 @@ adc_single -
                     |
                    GNDA
 
-    * Note that the ADC demo does not run in QEMU STM32 (because the ADC is not
-      implemented).
-
 blink_flash -
     Flashes the LED on and off
 
