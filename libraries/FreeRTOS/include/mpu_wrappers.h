@@ -1,68 +1,30 @@
 /*
-    FreeRTOS V7.1.1 - Copyright (C) 2012 Real Time Engineers Ltd.
-
-
-    ***************************************************************************
-     *                                                                       *
-     *    FreeRTOS tutorial books are available in pdf and paperback.        *
-     *    Complete, revised, and edited pdf reference manuals are also       *
-     *    available.                                                         *
-     *                                                                       *
-     *    Purchasing FreeRTOS documentation will not only help you, by       *
-     *    ensuring you get running as quickly as possible and with an        *
-     *    in-depth knowledge of how to use FreeRTOS, it will also help       *
-     *    the FreeRTOS project to continue with its mission of providing     *
-     *    professional grade, cross platform, de facto standard solutions    *
-     *    for microcontrollers - completely free of charge!                  *
-     *                                                                       *
-     *    >>> See http://www.FreeRTOS.org/Documentation for details. <<<     *
-     *                                                                       *
-     *    Thank you for using FreeRTOS, and thank you for your support!      *
-     *                                                                       *
-    ***************************************************************************
-
-
-    This file is part of the FreeRTOS distribution.
-
-    FreeRTOS is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation AND MODIFIED BY the FreeRTOS exception.
-    >>>NOTE<<< The modification to the GPL is included to allow you to
-    distribute a combined work that includes FreeRTOS without being obliged to
-    provide the source code for proprietary components outside of the FreeRTOS
-    kernel.  FreeRTOS is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-    more details. You should have received a copy of the GNU General Public
-    License and the FreeRTOS license exception along with FreeRTOS; if not it
-    can be viewed here: http://www.freertos.org/a00114.html and also obtained
-    by writing to Richard Barry, contact details for whom are available on the
-    FreeRTOS WEB site.
-
-    1 tab == 4 spaces!
-    
-    ***************************************************************************
-     *                                                                       *
-     *    Having a problem?  Start by reading the FAQ "My application does   *
-     *    not run, what could be wrong?                                      *
-     *                                                                       *
-     *    http://www.FreeRTOS.org/FAQHelp.html                               *
-     *                                                                       *
-    ***************************************************************************
-
-    
-    http://www.FreeRTOS.org - Documentation, training, latest information, 
-    license and contact details.
-    
-    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
-    including FreeRTOS+Trace - an indispensable productivity tool.
-
-    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell 
-    the code with commercial support, indemnification, and middleware, under 
-    the OpenRTOS brand: http://www.OpenRTOS.com.  High Integrity Systems also
-    provide a safety engineered and independently SIL3 certified version under 
-    the SafeRTOS brand: http://www.SafeRTOS.com.
-*/
+ * FreeRTOS Kernel V10.0.0
+ * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software. If you wish to use our Amazon
+ * FreeRTOS name, please do so in a fair use way that does not cause confusion.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * http://www.FreeRTOS.org
+ * http://aws.amazon.com/freertos
+ *
+ * 1 tab == 4 spaces!
+ */
 
 #ifndef MPU_WRAPPERS_H
 #define MPU_WRAPPERS_H
@@ -76,62 +38,134 @@ only for ports that are using the MPU. */
 	those files. */
 	#ifndef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
-		#define xTaskGenericCreate				MPU_xTaskGenericCreate
-		#define vTaskAllocateMPURegions			MPU_vTaskAllocateMPURegions
-		#define vTaskDelete						MPU_vTaskDelete
-		#define vTaskDelayUntil					MPU_vTaskDelayUntil
-		#define vTaskDelay						MPU_vTaskDelay
-		#define uxTaskPriorityGet				MPU_uxTaskPriorityGet
-		#define vTaskPrioritySet				MPU_vTaskPrioritySet
-		#define vTaskSuspend					MPU_vTaskSuspend
-		#define xTaskIsTaskSuspended			MPU_xTaskIsTaskSuspended
-		#define vTaskResume						MPU_vTaskResume
-		#define vTaskSuspendAll					MPU_vTaskSuspendAll
-		#define xTaskResumeAll					MPU_xTaskResumeAll
-		#define xTaskGetTickCount				MPU_xTaskGetTickCount
-		#define uxTaskGetNumberOfTasks			MPU_uxTaskGetNumberOfTasks
-		#define vTaskList						MPU_vTaskList
-		#define vTaskGetRunTimeStats			MPU_vTaskGetRunTimeStats
-		#define vTaskStartTrace					MPU_vTaskStartTrace
-		#define ulTaskEndTrace					MPU_ulTaskEndTrace
-		#define vTaskSetApplicationTaskTag		MPU_vTaskSetApplicationTaskTag
-		#define xTaskGetApplicationTaskTag		MPU_xTaskGetApplicationTaskTag
-		#define xTaskCallApplicationTaskHook	MPU_xTaskCallApplicationTaskHook
-		#define uxTaskGetStackHighWaterMark		MPU_uxTaskGetStackHighWaterMark
-		#define xTaskGetCurrentTaskHandle		MPU_xTaskGetCurrentTaskHandle
-		#define xTaskGetSchedulerState			MPU_xTaskGetSchedulerState
+		/*
+		 * Map standard (non MPU) API functions to equivalents that start
+		 * "MPU_".  This will cause the application code to call the MPU_
+		 * version, which wraps the non-MPU version with privilege promoting
+		 * then demoting code, so the kernel code always runs will full
+		 * privileges.
+		 */
 
-		#define xQueueGenericCreate				MPU_xQueueGenericCreate
-		#define xQueueCreateMutex				MPU_xQueueCreateMutex
-		#define xQueueGiveMutexRecursive		MPU_xQueueGiveMutexRecursive
-		#define xQueueTakeMutexRecursive		MPU_xQueueTakeMutexRecursive
-		#define xQueueCreateCountingSemaphore	MPU_xQueueCreateCountingSemaphore
-		#define xQueueGenericSend				MPU_xQueueGenericSend
-		#define xQueueAltGenericSend			MPU_xQueueAltGenericSend
-		#define xQueueAltGenericReceive			MPU_xQueueAltGenericReceive
-		#define xQueueGenericReceive			MPU_xQueueGenericReceive
-		#define uxQueueMessagesWaiting			MPU_uxQueueMessagesWaiting
-		#define vQueueDelete					MPU_vQueueDelete
+		/* Map standard tasks.h API functions to the MPU equivalents. */
+		#define xTaskCreate								MPU_xTaskCreate
+		#define xTaskCreateStatic						MPU_xTaskCreateStatic
+		#define xTaskCreateRestricted					MPU_xTaskCreateRestricted
+		#define vTaskAllocateMPURegions					MPU_vTaskAllocateMPURegions
+		#define vTaskDelete								MPU_vTaskDelete
+		#define vTaskDelay								MPU_vTaskDelay
+		#define vTaskDelayUntil							MPU_vTaskDelayUntil
+		#define xTaskAbortDelay							MPU_xTaskAbortDelay
+		#define uxTaskPriorityGet						MPU_uxTaskPriorityGet
+		#define eTaskGetState							MPU_eTaskGetState
+		#define vTaskGetInfo							MPU_vTaskGetInfo
+		#define vTaskPrioritySet						MPU_vTaskPrioritySet
+		#define vTaskSuspend							MPU_vTaskSuspend
+		#define vTaskResume								MPU_vTaskResume
+		#define vTaskSuspendAll							MPU_vTaskSuspendAll
+		#define xTaskResumeAll							MPU_xTaskResumeAll
+		#define xTaskGetTickCount						MPU_xTaskGetTickCount
+		#define uxTaskGetNumberOfTasks					MPU_uxTaskGetNumberOfTasks
+		#define pcTaskGetName							MPU_pcTaskGetName
+		#define xTaskGetHandle							MPU_xTaskGetHandle
+		#define uxTaskGetStackHighWaterMark				MPU_uxTaskGetStackHighWaterMark
+		#define vTaskSetApplicationTaskTag				MPU_vTaskSetApplicationTaskTag
+		#define xTaskGetApplicationTaskTag				MPU_xTaskGetApplicationTaskTag
+		#define vTaskSetThreadLocalStoragePointer		MPU_vTaskSetThreadLocalStoragePointer
+		#define pvTaskGetThreadLocalStoragePointer		MPU_pvTaskGetThreadLocalStoragePointer
+		#define xTaskCallApplicationTaskHook			MPU_xTaskCallApplicationTaskHook
+		#define xTaskGetIdleTaskHandle					MPU_xTaskGetIdleTaskHandle
+		#define uxTaskGetSystemState					MPU_uxTaskGetSystemState
+		#define vTaskList								MPU_vTaskList
+		#define vTaskGetRunTimeStats					MPU_vTaskGetRunTimeStats
+		#define xTaskGenericNotify						MPU_xTaskGenericNotify
+		#define xTaskNotifyWait							MPU_xTaskNotifyWait
+		#define ulTaskNotifyTake						MPU_ulTaskNotifyTake
+		#define xTaskNotifyStateClear					MPU_xTaskNotifyStateClear
 
-		#define pvPortMalloc					MPU_pvPortMalloc
-		#define vPortFree						MPU_vPortFree
-		#define xPortGetFreeHeapSize			MPU_xPortGetFreeHeapSize
-		#define vPortInitialiseBlocks			MPU_vPortInitialiseBlocks
+		#define xTaskGetCurrentTaskHandle				MPU_xTaskGetCurrentTaskHandle
+		#define vTaskSetTimeOutState					MPU_vTaskSetTimeOutState
+		#define xTaskCheckForTimeOut					MPU_xTaskCheckForTimeOut
+		#define xTaskGetSchedulerState					MPU_xTaskGetSchedulerState
 
-		#if configQUEUE_REGISTRY_SIZE > 0
-			#define vQueueAddToRegistry				MPU_vQueueAddToRegistry
-			#define vQueueUnregisterQueue			MPU_vQueueUnregisterQueue
+		/* Map standard queue.h API functions to the MPU equivalents. */
+		#define xQueueGenericSend						MPU_xQueueGenericSend
+		#define xQueueReceive							MPU_xQueueReceive
+		#define xQueuePeek								MPU_xQueuePeek
+		#define xQueueSemaphoreTake						MPU_xQueueSemaphoreTake
+		#define uxQueueMessagesWaiting					MPU_uxQueueMessagesWaiting
+		#define uxQueueSpacesAvailable					MPU_uxQueueSpacesAvailable
+		#define vQueueDelete							MPU_vQueueDelete
+		#define xQueueCreateMutex						MPU_xQueueCreateMutex
+		#define xQueueCreateMutexStatic					MPU_xQueueCreateMutexStatic
+		#define xQueueCreateCountingSemaphore			MPU_xQueueCreateCountingSemaphore
+		#define xQueueCreateCountingSemaphoreStatic		MPU_xQueueCreateCountingSemaphoreStatic
+		#define xQueueGetMutexHolder					MPU_xQueueGetMutexHolder
+		#define xQueueTakeMutexRecursive				MPU_xQueueTakeMutexRecursive
+		#define xQueueGiveMutexRecursive				MPU_xQueueGiveMutexRecursive
+		#define xQueueGenericCreate						MPU_xQueueGenericCreate
+		#define xQueueGenericCreateStatic				MPU_xQueueGenericCreateStatic
+		#define xQueueCreateSet							MPU_xQueueCreateSet
+		#define xQueueAddToSet							MPU_xQueueAddToSet
+		#define xQueueRemoveFromSet						MPU_xQueueRemoveFromSet
+		#define xQueueSelectFromSet						MPU_xQueueSelectFromSet
+		#define xQueueGenericReset						MPU_xQueueGenericReset
+
+		#if( configQUEUE_REGISTRY_SIZE > 0 )
+			#define vQueueAddToRegistry						MPU_vQueueAddToRegistry
+			#define vQueueUnregisterQueue					MPU_vQueueUnregisterQueue
+			#define pcQueueGetName							MPU_pcQueueGetName
 		#endif
 
-		/* Remove the privileged function macro. */
+		/* Map standard timer.h API functions to the MPU equivalents. */
+		#define xTimerCreate							MPU_xTimerCreate
+		#define xTimerCreateStatic						MPU_xTimerCreateStatic
+		#define pvTimerGetTimerID						MPU_pvTimerGetTimerID
+		#define vTimerSetTimerID						MPU_vTimerSetTimerID
+		#define xTimerIsTimerActive						MPU_xTimerIsTimerActive
+		#define xTimerGetTimerDaemonTaskHandle			MPU_xTimerGetTimerDaemonTaskHandle
+		#define xTimerPendFunctionCall					MPU_xTimerPendFunctionCall
+		#define pcTimerGetName							MPU_pcTimerGetName
+		#define xTimerGetPeriod							MPU_xTimerGetPeriod
+		#define xTimerGetExpiryTime						MPU_xTimerGetExpiryTime
+		#define xTimerGenericCommand					MPU_xTimerGenericCommand
+
+		/* Map standard event_group.h API functions to the MPU equivalents. */
+		#define xEventGroupCreate						MPU_xEventGroupCreate
+		#define xEventGroupCreateStatic					MPU_xEventGroupCreateStatic
+		#define xEventGroupWaitBits						MPU_xEventGroupWaitBits
+		#define xEventGroupClearBits					MPU_xEventGroupClearBits
+		#define xEventGroupSetBits						MPU_xEventGroupSetBits
+		#define xEventGroupSync							MPU_xEventGroupSync
+		#define vEventGroupDelete						MPU_vEventGroupDelete
+
+		/* Map standard message/stream_buffer.h API functions to the MPU
+		equivalents. */
+		#define xStreamBufferSend						MPU_xStreamBufferSend
+		#define xStreamBufferSendFromISR				MPU_xStreamBufferSendFromISR
+		#define xStreamBufferReceive					MPU_xStreamBufferReceive
+		#define xStreamBufferReceiveFromISR				MPU_xStreamBufferReceiveFromISR
+		#define vStreamBufferDelete						MPU_vStreamBufferDelete
+		#define xStreamBufferIsFull						MPU_xStreamBufferIsFull
+		#define xStreamBufferIsEmpty					MPU_xStreamBufferIsEmpty
+		#define xStreamBufferReset						MPU_xStreamBufferReset
+		#define xStreamBufferSpacesAvailable			MPU_xStreamBufferSpacesAvailable
+		#define xStreamBufferBytesAvailable				MPU_xStreamBufferBytesAvailable
+		#define xStreamBufferSetTriggerLevel			MPU_xStreamBufferSetTriggerLevel
+		#define xStreamBufferGenericCreate				MPU_xStreamBufferGenericCreate
+		#define xStreamBufferGenericCreateStatic		MPU_xStreamBufferGenericCreateStatic
+
+
+		/* Remove the privileged function macro, but keep the PRIVILEGED_DATA
+		macro so applications can place data in privileged access sections
+		(useful when using statically allocated objects). */
 		#define PRIVILEGED_FUNCTION
+		#define PRIVILEGED_DATA __attribute__((section("privileged_data")))
 
 	#else /* MPU_WRAPPERS_INCLUDED_FROM_API_FILE */
 
 		/* Ensure API functions go in the privileged execution section. */
 		#define PRIVILEGED_FUNCTION __attribute__((section("privileged_functions")))
 		#define PRIVILEGED_DATA __attribute__((section("privileged_data")))
-        //#define PRIVILEGED_DATA
 
 	#endif /* MPU_WRAPPERS_INCLUDED_FROM_API_FILE */
 
