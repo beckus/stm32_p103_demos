@@ -53,13 +53,12 @@ void sender_task(void *param)
             continue;
         }
         else{
-            usart_output("sending\n\r");
+            usart_output("SendinG\n\r");
             size = 200;
             memset(buf,0xac,size);
             len = xStreamBufferSend(comm_sb,buf,size,portMAX_DELAY);
             usart_output("send\n\r");
-            //usart_output(buf);
-            //usart_output("\n\r\n\r");            
+            vTaskDelay(30);
         }
     }while(1);
 }
@@ -68,7 +67,6 @@ void reader_task(void *param)
 {
     int len=0,size=0;
     char buf[1024];
-    //usart_output("reader------------------------------------------------------\n\r");
     do{
         if (xStreamBufferIsEmpty(comm_sb) == pdTRUE){
             //empty
@@ -78,11 +76,14 @@ void reader_task(void *param)
         else{
             usart_output("recving\n\r");
             size = 200;
+            buf[198]='\n';
+            buf[199]='\r';
             memset(buf,0,size);
             len = xStreamBufferReceive(comm_sb,buf,size,portMAX_DELAY);
             usart_output("recv: ");
             usart_output(buf);
             usart_output("\n\r\n\r");
+            vTaskDelay(50);
         }
     }while(1);
 
@@ -210,11 +211,6 @@ void serial_readwrite_task( void *pvParameters )
 
 int main(void)
 {
-    init_led();
-
-    init_button();
-    enable_button_interrupts();
-
     init_rs232();
     enable_rs232_interrupts();
     enable_rs232();
@@ -223,12 +219,8 @@ int main(void)
     serial_str_queue = xQueueCreate( 10, sizeof( serial_str_msg ) );
     serial_rx_queue = xQueueCreate( 1, sizeof( serial_ch_msg ) );
     vSemaphoreCreateBinary(serial_tx_wait_sem);
-    comm_sb = xStreamBufferCreate(1024,128);
+    comm_sb = xStreamBufferCreate(1000,128);
     
-
-    /* Create a task to flash the LED. */
-    //xTaskCreate( led_flash_task, ( signed portCHAR * ) "LED Flash", 512 /* stack size */, NULL, tskIDLE_PRIORITY + 5, NULL );
-
     /* Create tasks to queue a string to be written to the RS232 port. */
     xTaskCreate( sender_task, ( signed portCHAR * ) "sender", 512 /* stack size */, "TASK1", tskIDLE_PRIORITY + 10, NULL );
     xTaskCreate( reader_task, ( signed portCHAR * ) "reader", 512 /* stack size */, "TASK2", tskIDLE_PRIORITY + 10, NULL );
