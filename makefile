@@ -63,6 +63,7 @@ DEMOS += software_int
 DEMOS += stkalign
 DEMOS += systick
 DEMOS += timer
+DEMOS += printf_demo
 DEMOS += uart_echo
 DEMOS += uart_echo_int
 DEMOS += uart_repeat_write
@@ -251,6 +252,9 @@ demos/uart_echo/main.elf: demos/uart_echo/main.c
 demos/uart_echo/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/uart_echo/ -o $@ $^
 
+demos/printf_demo/main.elf: demos/printf_demo/main.c
+demos/printf_demo/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/printf_demo/ -o $@ $^
 
 demos/uart_repeat_write/main.elf: demos/uart_repeat_write/main.c
 demos/uart_repeat_write/main.elf: $(COMMON_FILES)
