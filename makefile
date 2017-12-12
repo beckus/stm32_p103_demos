@@ -36,6 +36,7 @@ COMMON_FILES = $(CORE_SRC)/core_cm3.c
 COMMON_FILES += $(DEVICE_SRC)/system_stm32f10x.c
 COMMON_FILES += $(DEVICE_SRC)/startup/gcc_ride7/startup_stm32f10x_md.s
 COMMON_FILES += demos/common/stm32_p103.c
+COMMON_FILES += demos/common/myprintk.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_rcc.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_gpio.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_usart.c
