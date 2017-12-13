@@ -70,6 +70,7 @@ DEMOS += uart_repeat_write
 DEMOS += uart_repeat_write_int
 DEMOS += rtc
 DEMOS += dac
+DEMOS += freertos_cycletask
 
 # List all demo folders
 DEMO_FOLDERS = $(addprefix demos/,$(DEMOS))
@@ -276,3 +277,9 @@ demos/dac/main.elf: $(COMMON_FILES)
 demos/rtc/main.elf: demos/rtc/main.c
 demos/rtc/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/rtc/ -o $@ $^
+
+demos/freertos_cycletask/main.elf: demos/freertos_cycletask/main.c
+demos/freertos_cycletask/main.elf: $(COMMON_FILES)
+demos/freertos_cycletask/main.elf: $(FREE_RTOS_SRC_FILES)
+demos/freertos_cycletask/main.elf: $(FREE_RTOS_SRC)/portable/MemMang/heap_1.c
+	$(CC) $(CFLAGS_LINK) -Idemos/freertos_cycletask/ -I$(FREE_RTOS_INC) -I$(FREE_RTOS_PORT_INC) -o $@ $^
