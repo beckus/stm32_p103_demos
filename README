@@ -109,7 +109,7 @@ c_mem_model -
     by the makefile.
 
 dac
-    Needs documentation
+    Pending documentation...
 
 freertos_singlethread -
     Example of using a real time operating system (FreeRTOS).  This runs a
@@ -124,12 +124,17 @@ freertos_multithread -
       4) Listens to the RS232 port.  When you type a line and then hit
          the enter key, the line is echoed back.
 
+freertos_cycletask
+freertos_semaphore1
+freertos_streambuffer
+    Pending documentation...
+
 qemu_test -
     Tests changes made in the QEMU_STM32.  Unless you are really interested,
     you should proably skip this demo.
 
 rtc
-    Needs documentation
+    Pending documentation...
 
 software_int -
     Periodically generates a software interrupt that in turn toggles the LED.
