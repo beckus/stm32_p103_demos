@@ -1,68 +1,30 @@
 /*
-    FreeRTOS V7.1.1 - Copyright (C) 2012 Real Time Engineers Ltd.
-
-
-    ***************************************************************************
-     *                                                                       *
-     *    FreeRTOS tutorial books are available in pdf and paperback.        *
-     *    Complete, revised, and edited pdf reference manuals are also       *
-     *    available.                                                         *
-     *                                                                       *
-     *    Purchasing FreeRTOS documentation will not only help you, by       *
-     *    ensuring you get running as quickly as possible and with an        *
-     *    in-depth knowledge of how to use FreeRTOS, it will also help       *
-     *    the FreeRTOS project to continue with its mission of providing     *
-     *    professional grade, cross platform, de facto standard solutions    *
-     *    for microcontrollers - completely free of charge!                  *
-     *                                                                       *
-     *    >>> See http://www.FreeRTOS.org/Documentation for details. <<<     *
-     *                                                                       *
-     *    Thank you for using FreeRTOS, and thank you for your support!      *
-     *                                                                       *
-    ***************************************************************************
-
-
-    This file is part of the FreeRTOS distribution.
-
-    FreeRTOS is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation AND MODIFIED BY the FreeRTOS exception.
-    >>>NOTE<<< The modification to the GPL is included to allow you to
-    distribute a combined work that includes FreeRTOS without being obliged to
-    provide the source code for proprietary components outside of the FreeRTOS
-    kernel.  FreeRTOS is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-    more details. You should have received a copy of the GNU General Public
-    License and the FreeRTOS license exception along with FreeRTOS; if not it
-    can be viewed here: http://www.freertos.org/a00114.html and also obtained
-    by writing to Richard Barry, contact details for whom are available on the
-    FreeRTOS WEB site.
-
-    1 tab == 4 spaces!
-    
-    ***************************************************************************
-     *                                                                       *
-     *    Having a problem?  Start by reading the FAQ "My application does   *
-     *    not run, what could be wrong?                                      *
-     *                                                                       *
-     *    http://www.FreeRTOS.org/FAQHelp.html                               *
-     *                                                                       *
-    ***************************************************************************
-
-    
-    http://www.FreeRTOS.org - Documentation, training, latest information, 
-    license and contact details.
-    
-    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
-    including FreeRTOS+Trace - an indispensable productivity tool.
-
-    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell 
-    the code with commercial support, indemnification, and middleware, under 
-    the OpenRTOS brand: http://www.OpenRTOS.com.  High Integrity Systems also
-    provide a safety engineered and independently SIL3 certified version under 
-    the SafeRTOS brand: http://www.SafeRTOS.com.
-*/
+ * FreeRTOS Kernel V10.0.0
+ * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software. If you wish to use our Amazon
+ * FreeRTOS name, please do so in a fair use way that does not cause confusion.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * http://www.FreeRTOS.org
+ * http://aws.amazon.com/freertos
+ *
+ * 1 tab == 4 spaces!
+ */
 
 
 #include <stdlib.h>
@@ -73,12 +35,12 @@
  * PUBLIC LIST API documented in list.h
  *----------------------------------------------------------*/
 
-void vListInitialise( xList *pxList )
+void vListInitialise( List_t * const pxList )
 {
 	/* The list structure contains a list item which is used to mark the
 	end of the list.  To initialise the list the list end is inserted
 	as the only list entry. */
-	pxList->pxIndex = ( xListItem * ) &( pxList->xListEnd );
+	pxList->pxIndex = ( ListItem_t * ) &( pxList->xListEnd );			/*lint !e826 !e740 The mini list structure is used as the list end to save RAM.  This is checked and valid. */
 
 	/* The list end value is the highest possible value in the list to
 	ensure it remains at the end of the list. */
@@ -86,35 +48,51 @@ void vListInitialise( xList *pxList )
 
 	/* The list end next and previous pointers point to itself so we know
 	when the list is empty. */
-	pxList->xListEnd.pxNext = ( xListItem * ) &( pxList->xListEnd );
-	pxList->xListEnd.pxPrevious = ( xListItem * ) &( pxList->xListEnd );
+	pxList->xListEnd.pxNext = ( ListItem_t * ) &( pxList->xListEnd );	/*lint !e826 !e740 The mini list structure is used as the list end to save RAM.  This is checked and valid. */
+	pxList->xListEnd.pxPrevious = ( ListItem_t * ) &( pxList->xListEnd );/*lint !e826 !e740 The mini list structure is used as the list end to save RAM.  This is checked and valid. */
 
-	pxList->uxNumberOfItems = ( unsigned portBASE_TYPE ) 0U;
+	pxList->uxNumberOfItems = ( UBaseType_t ) 0U;
+
+	/* Write known values into the list if
+	configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES is set to 1. */
+	listSET_LIST_INTEGRITY_CHECK_1_VALUE( pxList );
+	listSET_LIST_INTEGRITY_CHECK_2_VALUE( pxList );
 }
 /*-----------------------------------------------------------*/
 
-void vListInitialiseItem( xListItem *pxItem )
+void vListInitialiseItem( ListItem_t * const pxItem )
 {
 	/* Make sure the list item is not recorded as being on a list. */
 	pxItem->pvContainer = NULL;
+
+	/* Write known values into the list item if
+	configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES is set to 1. */
+	listSET_FIRST_LIST_ITEM_INTEGRITY_CHECK_VALUE( pxItem );
+	listSET_SECOND_LIST_ITEM_INTEGRITY_CHECK_VALUE( pxItem );
 }
 /*-----------------------------------------------------------*/
 
-void vListInsertEnd( xList *pxList, xListItem *pxNewListItem )
+void vListInsertEnd( List_t * const pxList, ListItem_t * const pxNewListItem )
 {
-volatile xListItem * pxIndex;
+ListItem_t * const pxIndex = pxList->pxIndex;
+
+	/* Only effective when configASSERT() is also defined, these tests may catch
+	the list data structures being overwritten in memory.  They will not catch
+	data errors caused by incorrect configuration or use of FreeRTOS. */
+	listTEST_LIST_INTEGRITY( pxList );
+	listTEST_LIST_ITEM_INTEGRITY( pxNewListItem );
 
 	/* Insert a new list item into pxList, but rather than sort the list,
 	makes the new list item the last item to be removed by a call to
-	pvListGetOwnerOfNextEntry.  This means it has to be the item pointed to by
-	the pxIndex member. */
-	pxIndex = pxList->pxIndex;
+	listGET_OWNER_OF_NEXT_ENTRY(). */
+	pxNewListItem->pxNext = pxIndex;
+	pxNewListItem->pxPrevious = pxIndex->pxPrevious;
 
-	pxNewListItem->pxNext = pxIndex->pxNext;
-	pxNewListItem->pxPrevious = pxList->pxIndex;
-	pxIndex->pxNext->pxPrevious = ( volatile xListItem * ) pxNewListItem;
-	pxIndex->pxNext = ( volatile xListItem * ) pxNewListItem;
-	pxList->pxIndex = ( volatile xListItem * ) pxNewListItem;
+	/* Only used during decision coverage testing. */
+	mtCOVERAGE_TEST_DELAY();
+
+	pxIndex->pxPrevious->pxNext = pxNewListItem;
+	pxIndex->pxPrevious = pxNewListItem;
 
 	/* Remember which list the item is in. */
 	pxNewListItem->pvContainer = ( void * ) pxList;
@@ -123,21 +101,25 @@ volatile xListItem * pxIndex;
 }
 /*-----------------------------------------------------------*/
 
-void vListInsert( xList *pxList, xListItem *pxNewListItem )
+void vListInsert( List_t * const pxList, ListItem_t * const pxNewListItem )
 {
-volatile xListItem *pxIterator;
-portTickType xValueOfInsertion;
+ListItem_t *pxIterator;
+const TickType_t xValueOfInsertion = pxNewListItem->xItemValue;
 
-	/* Insert the new list item into the list, sorted in ulListItem order. */
-	xValueOfInsertion = pxNewListItem->xItemValue;
+	/* Only effective when configASSERT() is also defined, these tests may catch
+	the list data structures being overwritten in memory.  They will not catch
+	data errors caused by incorrect configuration or use of FreeRTOS. */
+	listTEST_LIST_INTEGRITY( pxList );
+	listTEST_LIST_ITEM_INTEGRITY( pxNewListItem );
 
-	/* If the list already contains a list item with the same item value then
-	the new list item should be placed after it.  This ensures that TCB's which
-	are stored in ready lists (all of which have the same ulListItem value)
-	get an equal share of the CPU.  However, if the xItemValue is the same as
-	the back marker the iteration loop below will not end.  This means we need
-	to guard against this by checking the value first and modifying the
-	algorithm slightly if necessary. */
+	/* Insert the new list item into the list, sorted in xItemValue order.
+
+	If the list already contains a list item with the same item value then the
+	new list item should be placed after it.  This ensures that TCB's which are
+	stored in ready lists (all of which have the same xItemValue value) get a
+	share of the CPU.  However, if the xItemValue is the same as the back marker
+	the iteration loop below will not end.  Therefore the value is checked
+	first, and the algorithm slightly modified if necessary. */
 	if( xValueOfInsertion == portMAX_DELAY )
 	{
 		pxIterator = pxList->xListEnd.pxPrevious;
@@ -145,32 +127,38 @@ portTickType xValueOfInsertion;
 	else
 	{
 		/* *** NOTE ***********************************************************
-		If you find your application is crashing here then likely causes are:
+		If you find your application is crashing here then likely causes are
+		listed below.  In addition see http://www.freertos.org/FAQHelp.html for
+		more tips, and ensure configASSERT() is defined!
+		http://www.freertos.org/a00110.html#configASSERT
+
 			1) Stack overflow -
 			   see http://www.freertos.org/Stacks-and-stack-overflow-checking.html
-			2) Incorrect interrupt priority assignment, especially on Cortex-M3
+			2) Incorrect interrupt priority assignment, especially on Cortex-M
 			   parts where numerically high priority values denote low actual
-			   interrupt priories, which can seem counter intuitive.  See
-			   configMAX_SYSCALL_INTERRUPT_PRIORITY on http://www.freertos.org/a00110.html
+			   interrupt priorities, which can seem counter intuitive.  See
+			   http://www.freertos.org/RTOS-Cortex-M3-M4.html and the definition
+			   of configMAX_SYSCALL_INTERRUPT_PRIORITY on
+			   http://www.freertos.org/a00110.html
 			3) Calling an API function from within a critical section or when
-			   the scheduler is suspended.
+			   the scheduler is suspended, or calling an API function that does
+			   not end in "FromISR" from an interrupt.
 			4) Using a queue or semaphore before it has been initialised or
 			   before the scheduler has been started (are interrupts firing
 			   before vTaskStartScheduler() has been called?).
-		See http://www.freertos.org/FAQHelp.html for more tips.
 		**********************************************************************/
-		
-		for( pxIterator = ( xListItem * ) &( pxList->xListEnd ); pxIterator->pxNext->xItemValue <= xValueOfInsertion; pxIterator = pxIterator->pxNext )
+
+		for( pxIterator = ( ListItem_t * ) &( pxList->xListEnd ); pxIterator->pxNext->xItemValue <= xValueOfInsertion; pxIterator = pxIterator->pxNext ) /*lint !e826 !e740 The mini list structure is used as the list end to save RAM.  This is checked and valid. */
 		{
-			/* There is nothing to do here, we are just iterating to the
-			wanted insertion position. */
+			/* There is nothing to do here, just iterating to the wanted
+			insertion position. */
 		}
 	}
 
 	pxNewListItem->pxNext = pxIterator->pxNext;
-	pxNewListItem->pxNext->pxPrevious = ( volatile xListItem * ) pxNewListItem;
+	pxNewListItem->pxNext->pxPrevious = pxNewListItem;
 	pxNewListItem->pxPrevious = pxIterator;
-	pxIterator->pxNext = ( volatile xListItem * ) pxNewListItem;
+	pxIterator->pxNext = pxNewListItem;
 
 	/* Remember which list the item is in.  This allows fast removal of the
 	item later. */
@@ -180,25 +168,32 @@ portTickType xValueOfInsertion;
 }
 /*-----------------------------------------------------------*/
 
-void vListRemove( xListItem *pxItemToRemove )
+UBaseType_t uxListRemove( ListItem_t * const pxItemToRemove )
 {
-xList * pxList;
+/* The list item knows which list it is in.  Obtain the list from the list
+item. */
+List_t * const pxList = ( List_t * ) pxItemToRemove->pvContainer;
 
 	pxItemToRemove->pxNext->pxPrevious = pxItemToRemove->pxPrevious;
 	pxItemToRemove->pxPrevious->pxNext = pxItemToRemove->pxNext;
-	
-	/* The list item knows which list it is in.  Obtain the list from the list
-	item. */
-	pxList = ( xList * ) pxItemToRemove->pvContainer;
+
+	/* Only used during decision coverage testing. */
+	mtCOVERAGE_TEST_DELAY();
 
 	/* Make sure the index is left pointing to a valid item. */
 	if( pxList->pxIndex == pxItemToRemove )
 	{
 		pxList->pxIndex = pxItemToRemove->pxPrevious;
 	}
+	else
+	{
+		mtCOVERAGE_TEST_MARKER();
+	}
 
 	pxItemToRemove->pvContainer = NULL;
 	( pxList->uxNumberOfItems )--;
+
+	return pxList->uxNumberOfItems;
 }
 /*-----------------------------------------------------------*/
 

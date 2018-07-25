@@ -36,6 +36,7 @@ COMMON_FILES = $(CORE_SRC)/core_cm3.c
 COMMON_FILES += $(DEVICE_SRC)/system_stm32f10x.c
 COMMON_FILES += $(DEVICE_SRC)/startup/gcc_ride7/startup_stm32f10x_md.s
 COMMON_FILES += demos/common/stm32_p103.c
+COMMON_FILES += demos/common/myprintk.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_rcc.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_gpio.c
 COMMON_FILES += $(STD_PERIPH_SRC)/stm32f10x_usart.c
@@ -56,24 +57,28 @@ DEMOS += button_int_infinite
 DEMOS += c_mem_model
 DEMOS += freertos_singlethread
 DEMOS += freertos_multithread
+DEMOS += freertos_streambuffer
 DEMOS += qemu_test
 DEMOS += software_int
 DEMOS += stkalign
 DEMOS += systick
 DEMOS += timer
+DEMOS += printf_demo
 DEMOS += uart_echo
 DEMOS += uart_echo_int
 DEMOS += uart_repeat_write
 DEMOS += uart_repeat_write_int
 DEMOS += rtc
 DEMOS += dac
+DEMOS += freertos_semaphore1 
+DEMOS += freertos_cycletask
 
 # List all demo folders
 DEMO_FOLDERS = $(addprefix demos/,$(DEMOS))
 
 # List FreeRTOS resources
 FREE_RTOS_SRC = $(SRC)/libraries/FreeRTOS
-FREE_RTOS_SRC_FILES = $(FREE_RTOS_SRC)/croutine.c $(FREE_RTOS_SRC)/list.c $(FREE_RTOS_SRC)/queue.c $(FREE_RTOS_SRC)/tasks.c $(FREE_RTOS_SRC)/croutine.c $(FREE_RTOS_SRC)/portable/GCC/ARM_CM3/port.c
+FREE_RTOS_SRC_FILES = $(FREE_RTOS_SRC)/croutine.c $(FREE_RTOS_SRC)/list.c $(FREE_RTOS_SRC)/queue.c $(FREE_RTOS_SRC)/tasks.c $(FREE_RTOS_SRC)/croutine.c $(FREE_RTOS_SRC)/stream_buffer.c $(FREE_RTOS_SRC)/portable/GCC/ARM_CM3/port.c
 FREE_RTOS_INC = $(FREE_RTOS_SRC)/include/
 FREE_RTOS_PORT_INC = $(FREE_RTOS_SRC)/portable/GCC/ARM_CM3/
 
@@ -214,6 +219,11 @@ demos/freertos_multithread/main.elf: $(FREE_RTOS_SRC_FILES)
 demos/freertos_multithread/main.elf: $(FREE_RTOS_SRC)/portable/MemMang/heap_1.c
 	$(CC) $(CFLAGS_LINK) -Idemos/freertos_multithread/ -I$(FREE_RTOS_INC) -I$(FREE_RTOS_PORT_INC) -o $@ $^
 
+demos/freertos_streambuffer/main.elf: demos/freertos_streambuffer/main.c
+demos/freertos_streambuffer/main.elf: $(COMMON_FILES)
+demos/freertos_streambuffer/main.elf: $(FREE_RTOS_SRC_FILES)
+demos/freertos_streambuffer/main.elf: $(FREE_RTOS_SRC)/portable/MemMang/heap_1.c
+	$(CC) $(CFLAGS_LINK) -Idemos/freertos_streambuffer/ -I$(FREE_RTOS_INC) -I$(FREE_RTOS_PORT_INC) -o $@ $^
 
 demos/qemu_test/main.elf: demos/qemu_test/main.c
 demos/qemu_test/main.elf: $(COMMON_FILES)
@@ -244,6 +254,9 @@ demos/uart_echo/main.elf: demos/uart_echo/main.c
 demos/uart_echo/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/uart_echo/ -o $@ $^
 
+demos/printf_demo/main.elf: demos/printf_demo/main.c
+demos/printf_demo/main.elf: $(COMMON_FILES)
+	$(CC) $(CFLAGS_LINK) -Idemos/printf_demo/ -o $@ $^
 
 demos/uart_repeat_write/main.elf: demos/uart_repeat_write/main.c
 demos/uart_repeat_write/main.elf: $(COMMON_FILES)
@@ -265,3 +278,15 @@ demos/dac/main.elf: $(COMMON_FILES)
 demos/rtc/main.elf: demos/rtc/main.c
 demos/rtc/main.elf: $(COMMON_FILES)
 	$(CC) $(CFLAGS_LINK) -Idemos/rtc/ -o $@ $^
+
+demos/freertos_semaphore1/main.elf: demos/freertos_semaphore1/main.c
+demos/freertos_semaphore1/main.elf: $(COMMON_FILES)
+demos/freertos_semaphore1/main.elf: $(FREE_RTOS_SRC_FILES)
+demos/freertos_semaphore1/main.elf: $(FREE_RTOS_SRC)/portable/MemMang/heap_1.c
+	$(CC) $(CFLAGS_LINK) -Idemos/freertos_semaphore1/ -I$(FREE_RTOS_INC) -I$(FREE_RTOS_PORT_INC) -o $@ $^
+
+demos/freertos_cycletask/main.elf: demos/freertos_cycletask/main.c
+demos/freertos_cycletask/main.elf: $(COMMON_FILES)
+demos/freertos_cycletask/main.elf: $(FREE_RTOS_SRC_FILES)
+demos/freertos_cycletask/main.elf: $(FREE_RTOS_SRC)/portable/MemMang/heap_1.c
+	$(CC) $(CFLAGS_LINK) -Idemos/freertos_cycletask/ -I$(FREE_RTOS_INC) -I$(FREE_RTOS_PORT_INC) -o $@ $^
