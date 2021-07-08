@@ -1,5 +1,5 @@
 #define USE_STDPERIPH_DRIVER
-#include "stm32f10x.h"
+#include "stm32_p103.h"
 
 #define SHPR_BYTE_COUNT 12
 
@@ -105,30 +105,30 @@ int main(void)
     uint32_t *vtor_reg = (uint32_t *)0xE000ED08;
     uint32_t vtor = vtor_reg[0];
 
-    /* Note that the SHPR (System Handler Priority Registers) only hold a 4 bit
-     * priority, which are stored in the upper 4 bits of each byte.  The lower
-     * 4 bits of each byte are read-only and always hold 0.
-     */
-    test_word_write((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x10, 0x10);
-    test_word_read((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT);
+    // /* Note that the SHPR (System Handler Priority Registers) only hold a 4 bit
+    //  * priority, which are stored in the upper 4 bits of each byte.  The lower
+    //  * 4 bits of each byte are read-only and always hold 0.
+    //  */
+    // test_word_write((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x10, 0x10);
+    // test_word_read((uint32_t *)SCB->SHP, SHPR_BYTE_COUNT);
 
-    test_hword_write((uint16_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x20, 0x10);
-    test_hword_read((uint16_t *)SCB->SHP, SHPR_BYTE_COUNT);
+    // test_hword_write((uint16_t *)SCB->SHP, SHPR_BYTE_COUNT, 0x20, 0x10);
+    // test_hword_read((uint16_t *)SCB->SHP, SHPR_BYTE_COUNT);
 
-    test_byte_write(SCB->SHP, SHPR_BYTE_COUNT, 0x30, 0x10);
-    test_byte_read(SCB->SHP, SHPR_BYTE_COUNT);
+    // test_byte_write(SCB->SHP, SHPR_BYTE_COUNT, 0x30, 0x10);
+    // test_byte_read(SCB->SHP, SHPR_BYTE_COUNT);
 
-    /* Not implemented in QEMU */
-    /*test_word_read((uint32_t *)0xe000efd0, 0x10);*/
+    // /* Not implemented in QEMU */
+    // /*test_word_read((uint32_t *)0xe000efd0, 0x10);*/
 
-    test_word_read((uint32_t *)0xe000efe0, 0x10);
-    test_word_read((uint32_t *)0xe000eff0, 0x10);
+    // test_word_read((uint32_t *)0xe000efe0, 0x10);
+    // test_word_read((uint32_t *)0xe000eff0, 0x10);
 
-    test_hword_read((uint16_t *)0xe000efe0, 0x10);
-    test_hword_read((uint16_t *)0xe000eff0, 0x10);
+    // test_hword_read((uint16_t *)0xe000efe0, 0x10);
+    // test_hword_read((uint16_t *)0xe000eff0, 0x10);
 
-    test_byte_read((uint8_t *)0xe000efe0, 0x10);
-    test_byte_read((uint8_t *)0xe000eff0, 0x10);
+    // test_byte_read((uint8_t *)0xe000efe0, 0x10);
+    // test_byte_read((uint8_t *)0xe000eff0, 0x10);
 
     /* Freeze */
     while(1);

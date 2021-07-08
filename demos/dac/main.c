@@ -1,5 +1,5 @@
 #define USE_STDPERIPH_DRIVER
-#include "stm32f10x.h"
+#include "stm32_p103.h"
     
 /* Flag whenever the button is pressed.
  * Note that the interrupt handler is initialized to only
