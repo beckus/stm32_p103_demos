@@ -1,7 +1,7 @@
 // ADC : cf AN3116
 // stm32flash /dev/ttyUSB0 -w main.bin 
 #define USE_STDPERIPH_DRIVER
-#include "stm32f10x.h"
+#include "stm32_p103.h"
 
 
 

@@ -29,4 +29,9 @@ void enable_rs232(void);
 void send_byte(uint8_t b);
 void send_number(unsigned long sample, int radix);
 
+// Missing prototype declarations
+void enable_button_interrupts(void);
+void rs232_print_str(const char *str); 
+char hex_to_char(unsigned hex_number);
+
 #endif /* __STM32_P103_H */

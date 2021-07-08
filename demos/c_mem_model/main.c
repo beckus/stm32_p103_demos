@@ -1,5 +1,5 @@
 #define USE_STDPERIPH_DRIVER
-#include "stm32f10x.h"
+#include "stm32_p103.h"
 
 /* Used only to study and test the linker script.
  * This has example for constant data and initialized data.

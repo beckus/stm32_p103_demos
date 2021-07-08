@@ -1,5 +1,5 @@
 #define USE_STDPERIPH_DRIVER
-#include "stm32f10x.h"
+#include "stm32_p103.h"
 #include "stm32_p103.h"
 
 void busyLoop(uint32_t delay )
