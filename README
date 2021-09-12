@@ -140,7 +140,7 @@ freertos_streambuffer
 
 qemu_test -
     Tests changes made in the QEMU_STM32.  Unless you are really interested,
-    you should proably skip this demo.
+    you should probably skip this demo.
 
 rtc
     Pending documentation...
