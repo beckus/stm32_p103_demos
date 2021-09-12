@@ -19,7 +19,7 @@ CORE_CFLAGS = -I./ -I$(CORE_SRC) -I$(DEVICE_SRC) -I$(STD_PERIPH)/inc -Idemos/com
 CFLAGS  = $(CORE_CFLAGS) -c 
 CFLAGS_LINK = -Wl,-Tdemos/main.ld -nostartfiles $(CORE_CFLAGS)
 ASFLAGS = -mcpu=cortex-m3 -mthumb -g
-LDFLAGS = -Tdemos/main.ld -nostartfiles
+LDFLAGS = -Tdemos/main.ld
 CPFLAGS = -Obinary
 ODFLAGS	= -S
 
@@ -172,7 +172,7 @@ demos/blink_flash/main.elf: $(COMMON_FILES)
 
 
 demos/blink_flash_asm/main.elf: demos/blink_flash_asm/main.o
-	$(LD) $(LDFLAGS) -nostartfiles -o $@ $<
+	$(LD) $(LDFLAGS) -o $@ $<
 
 demos/blink_flash_asm/main.o: demos/blink_flash_asm/main.s
 	 $(AS) $(ASFLAGS) -o $@ $<
