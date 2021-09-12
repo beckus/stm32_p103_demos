@@ -14,10 +14,19 @@ The makefile and linker scripts are intended to be run in a GNU/Linux environmen
 
 To compile, you need the ARM GCC compiler and utilities (arm-none-eabi-gcc,
 arm-none-eabi-ld, arm-none-eabi-as, arm-none-eabi-objcopy,
-arm-none-eabi-objdump).  These should be in your path.  I chose
-to compile using the CodeSourcery G++ Lite toolchain for ARM.  At the time of
-writing, I used:
-Sourcery CodeBench Lite 2012.03-56 for ARM EABI
+arm-none-eabi-objdump).
+
+I originally used the CodeSourcery G++ Lite toolchain for ARM (Sourcery CodeBench Lite 2012.03-56 for ARM EABI),
+but this no longer appears to be supported. A 2013 version is available at https://sourcery.sw.siemens.com/GNUToolchain/release2635,
+but I was not able to run the installer on my machine.
+
+I currently use the GNU Arm Embedded Toolchain located at
+https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm (Version 10.3-2021.07).
+To install this:
+1) Download and unpack the Linux x86_64 Tarball (or approriate version)
+2) Add the bin folder (Which contains the toolchain binaries) to the path using the following command:
+     export PATH="/path_to_tarball_contents/bin:$PATH"
+3) You are ready to compile stm32_p103_demos - see the "USING THE MAKEFILE" section below.
 
 To run the QEMU examples, you need a modifed version of QEMU which contains the
 STM32 peripherals.  This can be found at: https://github.com/beckus/qemu_stm32 .
@@ -349,5 +358,7 @@ OpenHardware "Olimex ARM-USB-OCD"
     http://www.openhardware.net/Embedded_ARM/OpenOCD_JTAG/
     
 	
-	
-Written by Andre Beckus
+Thank you to the following contributors:
+Aunyx (https://github.com/Aunyx)
+hankhank (https://github.com/hankhank)
+oska874 (https://github.com/oska874)
